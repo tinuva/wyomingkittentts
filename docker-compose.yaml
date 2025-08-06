@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  wy-kittentts:
+    image: wy-kittentts:latest
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: wy-kittentts
+    ports:
+      - "10200:10200"
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "10200"
+      MODEL_ID: "KittenML/kitten-tts-nano-0.1"
+      VOICE: "expr-voice-5-m"
+      SPEED: "1.0"
+      SAMPLE_RATE: "24000"
+      LOG_LEVEL: "INFO"
+      # Optionally set HF_HOME to force the cache path inside the volume
+      HF_HOME: "/root/.cache/huggingface"
+    volumes:
+      # Persist Hugging Face cache across runs for faster cold starts
+      - hf-cache:/root/.cache/huggingface
+    restart: unless-stopped
+
+volumes:
+  hf-cache:
+    driver: local

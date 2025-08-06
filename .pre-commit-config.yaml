@@ -1,0 +1,85 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        name: black (python formatter)
+        language_version: python3
+        additional_dependencies: []
+        files: ^(server/|client/).*\.(py)$
+        args:
+          - --line-length=100
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.0
+    hooks:
+      - id: flake8
+        name: flake8 (python linter)
+        additional_dependencies:
+          - flake8-bugbear==24.4.26
+          - flake8-comprehensions==3.14.0
+        files: ^(server/|client/).*\.(py)$
+        args:
+          - --max-line-length=100
+          - --extend-ignore=E203,W503
+          - --select=B,C,E,F,W,B9
+          - --show-source
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        name: isort (import sorter)
+        files: ^(server/|client/).*\.(py)$
+        args:
+          - --profile=black
+          - --line-length=100
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.6.1
+    hooks:
+      - id: ruff
+        name: ruff (fast linter)
+        files: ^(server/|client/).*\.(py)$
+        args:
+          - --fix
+          - --line-length=100
+
+  - repo: https://github.com/asottile/yesqa
+    rev: v1.5.0
+    hooks:
+      - id: yesqa
+        name: yesqa (remove unnecessary noqa)
+        files: ^(server/|client/).*\.(py)$
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-yaml
+        files: ^(.*\.ya?ml)$
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-merge-conflict
+      - id: debug-statements
+        files: ^(server/|client/).*\.(py)$
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy (type checker)
+        entry: bash -lc 'mypy --ignore-missing-imports --install-types --non-interactive server client'
+        language: system
+        pass_filenames: false
+        types: [python]
+        additional_dependencies: []
+        verbose: true
+
+default_language_version:
+  python: python3
+
+ci:
+  autofix_prs: true
+  skip: []
+  autoupdate_schedule: quarterly

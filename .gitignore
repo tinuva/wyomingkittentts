@@ -1,0 +1,81 @@
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# Build/packaging artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+wheels/
+
+# Test/coverage
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+.pyre/
+.mypy_cache/
+.pytype/
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*.orig
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and runtime
+*.log
+logs/
+*.pid
+
+# Local data/cache
+.cache/
+.cache/**
+.hf_cache/
+huggingface/
+huggingface-hub/
+hf-cache/
+.huggingface/
+.huggingface/**
+
+# Wyoming server/client artifacts
+*.wav
+out.wav
+kitten.wav
+
+# Docker/Compose
+**/.env
+docker-compose.override.yml
+
+# Coverage and reports
+*.xml
+*.csv
+coverage.xml
+report.xml
+
+# Linting/formatting
+ruff_cache/
+
+# Pre-commit
+.pre-commit-config.yaml.bak
+
+# Misc local scripts results
+tmp/
+temp/
