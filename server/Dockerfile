@@ -20,11 +20,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Install Python dependencies first to leverage layer caching
-COPY server/requirements.txt /app/requirements.txt
+COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
 # Copy server application
-COPY server/app.py /app/app.py
+COPY app.py /app/app.py
 
 # Expose Wyoming port
 EXPOSE 10200
