@@ -5,10 +5,12 @@ Simple Wyoming-like protocol client for testing the KittenTTS server.
 Protocol (pragmatic subset):
 - Each frame is 4-byte big-endian length followed by payload bytes.
 - Request:
-  1) JSON header frame: {"type":"TTS","voice":"expr-voice-5-m","speed":1.0,"sample_rate":24000}
+  1) JSON header frame:
+     {"type":"TTS","voice":"expr-voice-5-m","speed":1.0,"sample_rate":24000}
   2) UTF-8 encoded text frame
 - Response:
-  1) JSON header frame: {"type":"AUDIO","format":"wav","sample_rate":24000,"voice":"expr-voice-5-m","ok":true}
+  1) JSON header frame:
+     {"type":"AUDIO","format":"wav","sample_rate":24000,"voice":"expr-voice-5-m","ok":true}
      or {"type":"ERROR","message":"..."}
   2) If ok, a single frame of WAV bytes
 """

@@ -101,9 +101,12 @@ def main() -> int:
         # Basic sanity checks on header fields
         allowed_sr = (16000, 22050, 24000, 44100, 48000)
         if hdr.get("ok") is True and hdr.get("sample_rate") in allowed_sr and len(wav) > 44:
-            print(
-                f"healthy: sr={hdr.get('sample_rate')}, voice={hdr.get('voice')}, wav_bytes={len(wav)}"
+            msg = (
+                f"healthy: sr={hdr.get('sample_rate')}, "
+                f"voice={hdr.get('voice')}, "
+                f"wav_bytes={len(wav)}"
             )
+            print(msg)
             return 0
         else:
             print(
