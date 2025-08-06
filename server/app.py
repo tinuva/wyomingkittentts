@@ -24,7 +24,7 @@ if "misaki.espeak" not in sys.modules:
         def set_data_path(path):
             EspeakWrapper.data_path = path
 
-    shim_mod.EspeakWrapper = EspeakWrapper
+    setattr(shim_mod, "EspeakWrapper", EspeakWrapper)
     sys.modules["misaki.espeak"] = shim_mod
 
 from kittentts import KittenTTS
