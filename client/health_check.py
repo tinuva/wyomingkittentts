@@ -70,7 +70,7 @@ def check_server(host: str, port: int, timeout: float = 10.0) -> Tuple[Dict[str,
         try:
             resp_hdr = json.loads(resp_hdr_bytes.decode("utf-8"))
         except Exception as e:
-            raise RuntimeError(f"Invalid response header JSON: {e}")
+            raise RuntimeError(f"Invalid response header JSON: {e}") from e
 
         if resp_hdr.get("type") == "ERROR":
             raise RuntimeError(f"Server error: {resp_hdr.get('message')}")
@@ -88,19 +88,30 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Health-check client for Wyoming KittenTTS server")
     parser.add_argument("--host", default="127.0.0.1", help="Server host (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=10200, help="Server port (default: 10200)")
-    parser.add_argument("--timeout", type=float, default=10.0, help="Socket timeout seconds (default: 10)")
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=10.0,
+        help="Socket timeout seconds (default: 10)",
+    )
     args = parser.parse_args()
 
     try:
         hdr, wav = check_server(args.host, args.port, args.timeout)
         # Basic sanity checks on header fields
-        if hdr.get("ok") is True and hdr.get("sample_rate") in (16000, 22050, 24000, 44100, 48000) and len(wav) > 44:
-            print(f"healthy: sr={hdr.get('sample_rate')}, voice={hdr.get('voice')}, wav_bytes={len(wav)}")
+        allowed_sr = (16000, 22050, 24000, 44100, 48000)
+        if hdr.get("ok") is True and hdr.get("sample_rate") in allowed_sr and len(wav) > 44:
+            print(
+                f"healthy: sr={hdr.get('sample_rate')}, voice={hdr.get('voice')}, wav_bytes={len(wav)}"
+            )
             return 0
         else:
-            print(f"unhealthy: unexpected header or payload (hdr={hdr}, bytes={len(wav)})", file=sys.stderr)
+            print(
+                f"unhealthy: unexpected header or payload (hdr={hdr}, bytes={len(wav)})",
+                file=sys.stderr,
+            )
             return 1
-    except (ConnectionRefusedError, TimeoutError, OSError) as e:
+    except OSError as e:
         print(f"unhealthy: connection error: {e}", file=sys.stderr)
         return 2
     except Exception as e:

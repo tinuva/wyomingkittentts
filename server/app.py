@@ -35,11 +35,18 @@ from kittentts import KittenTTS
 #     { "type": "TTS", "voice": "expr-voice-5-m", "speed": 1.0, "sample_rate": 24000 }
 # - Then client sends a text frame (UTF-8).
 # - Server responds with a header frame (JSON) and a single audio frame (WAV bytes):
-#     { "type": "AUDIO", "format": "wav", "sample_rate": 24000, "voice": "expr-voice-5-m", "ok": true }
+#     {
+#         "type": "AUDIO",
+#         "format": "wav",
+#         "sample_rate": 24000,
+#         "voice": "expr-voice-5-m",
+#         "ok": true
+#     }
 # - On error, server responds with:
 #     { "type": "ERROR", "message": "<details>" }
 #
-# This is intentionally minimal and self-contained. It’s compatible with simple Wyoming-style clients.
+# This is intentionally minimal and self-contained. It’s compatible with
+# simple Wyoming-style clients.
 
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
 logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s %(levelname)s %(name)s - %(message)s")
@@ -53,6 +60,7 @@ MODEL_ID = os.environ.get("MODEL_ID", "KittenML/kitten-tts-nano-0.1")
 DEFAULT_VOICE = os.environ.get("VOICE", "expr-voice-4-f")
 DEFAULT_SPEED = float(os.environ.get("SPEED", "1.0"))
 DEFAULT_SAMPLE_RATE = int(os.environ.get("SAMPLE_RATE", "24000"))
+
 
 class WyomingKittenTTSServer:
     def __init__(self) -> None:
@@ -121,7 +129,10 @@ class WyomingKittenTTSServer:
 
             voice = header.get("voice", DEFAULT_VOICE)
             speed = self._safe_float(header.get("speed", DEFAULT_SPEED), DEFAULT_SPEED)
-            sample_rate = self._safe_int(header.get("sample_rate", DEFAULT_SAMPLE_RATE), DEFAULT_SAMPLE_RATE)
+            sample_rate = self._safe_int(
+                header.get("sample_rate", DEFAULT_SAMPLE_RATE),
+                DEFAULT_SAMPLE_RATE,
+            )
 
             LOG.info("Synthesize request: voice=%s speed=%.2f sr=%d text='%s...'",
                      voice, speed, sample_rate, text[:80].replace("\n", " "))

@@ -76,7 +76,7 @@ def tts_request(
         try:
             resp_hdr = json.loads(resp_hdr_bytes.decode("utf-8"))
         except Exception as e:
-            raise RuntimeError(f"Invalid response header JSON: {e}")
+            raise RuntimeError(f"Invalid response header JSON: {e}") from e
 
         if resp_hdr.get("type") == "ERROR":
             raise RuntimeError(f"Server error: {resp_hdr.get('message')}")
@@ -92,12 +92,30 @@ def main():
     parser = argparse.ArgumentParser(description="Wyoming KittenTTS client")
     parser.add_argument("--host", default="127.0.0.1", help="Server host (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=10200, help="Server port (default: 10200)")
-    parser.add_argument("--voice", default="expr-voice-5-m", help="Voice id (default: expr-voice-5-m)")
+    parser.add_argument(
+        "--voice",
+        default="expr-voice-5-m",
+        help="Voice id (default: expr-voice-5-m)",
+    )
     parser.add_argument("--speed", type=float, default=1.0, help="Speech speed (default: 1.0)")
-    parser.add_argument("--sample-rate", type=int, default=24000, help="Output sample rate (default: 24000)")
-    parser.add_argument("--timeout", type=float, default=30.0, help="Socket timeout seconds (default: 30)")
-    parser.add_argument("text", nargs="?", default="This is a test of the Wyoming KittenTTS server.",
-                        help="Text to synthesize")
+    parser.add_argument(
+        "--sample-rate",
+        type=int,
+        default=24000,
+        help="Output sample rate (default: 24000)",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=30.0,
+        help="Socket timeout seconds (default: 30)",
+    )
+    parser.add_argument(
+        "text",
+        nargs="?",
+        default="This is a test of the Wyoming KittenTTS server.",
+        help="Text to synthesize",
+    )
     parser.add_argument("output", nargs="?", default="out.wav", help="Path to save WAV output")
     args = parser.parse_args()
 
@@ -115,7 +133,8 @@ def main():
         f.write(wav)
 
     print(
-        f"Saved WAV to {args.output} (sr={hdr.get('sample_rate')}, voice={hdr.get('voice')}, bytes={len(wav)})"
+        f"Saved WAV to {args.output} "
+        f"(sr={hdr.get('sample_rate')}, voice={hdr.get('voice')}, bytes={len(wav)})"
     )
 
 
