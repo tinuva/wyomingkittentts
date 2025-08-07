@@ -19,7 +19,7 @@ import argparse
 import json
 import socket
 import struct
-from typing import Tuple, Dict, Any
+from typing import Any, Dict, Tuple
 
 
 def send_frame(sock: socket.socket, data: bytes) -> None:

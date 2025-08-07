@@ -5,14 +5,14 @@ import json
 import logging
 import os
 import struct
-from typing import Optional
-
-import soundfile as sf
 
 # Shim misaki.espeak to avoid AttributeError on EspeakWrapper.set_data_path
 # Safe because KittenTTS uses phonemizer's EspeakBackend internally, not misaki.espeak.
 import sys
 import types
+from typing import Optional
+
+import soundfile as sf
 
 if "misaki.espeak" not in sys.modules:
     shim_mod = types.ModuleType("misaki.espeak")
@@ -24,7 +24,12 @@ if "misaki.espeak" not in sys.modules:
         def set_data_path(path):
             EspeakWrapper.data_path = path
 
-    setattr(shim_mod, "EspeakWrapper", EspeakWrapper)
+    # Let type checkers treat the shim module as dynamic by casting to Any,
+    # then assign the attribute using normal access to satisfy flake8-bugbear B010.
+    from typing import Any, cast
+
+    shim_any = cast(Any, shim_mod)
+    shim_any.EspeakWrapper = EspeakWrapper
     sys.modules["misaki.espeak"] = shim_mod
 
 from kittentts import KittenTTS
@@ -103,6 +108,7 @@ class WyomingKittenTTSServer:
                     # Try to report kittentts package version if available
                     try:
                         import importlib.metadata as im
+
                         ver = im.version("kittentts")
                     except Exception:
                         ver = "unknown"
@@ -134,8 +140,13 @@ class WyomingKittenTTSServer:
                 DEFAULT_SAMPLE_RATE,
             )
 
-            LOG.info("Synthesize request: voice=%s speed=%.2f sr=%d text='%s...'",
-                     voice, speed, sample_rate, text[:80].replace("\n", " "))
+            LOG.info(
+                "Synthesize request: voice=%s speed=%.2f sr=%d text='%s...'",
+                voice,
+                speed,
+                sample_rate,
+                text[:80].replace("\n", " "),
+            )
 
             try:
                 audio = self.tts.generate(text, voice=voice, speed=speed)
